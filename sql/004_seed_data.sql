@@ -1,15 +1,19 @@
--- Insert 8 products
-INSERT INTO products (code, price) VALUES
-('PROD001', 10.99),
-('PROD002', 12.49),
-('PROD003', 8.75),
-('PROD004', 15.00),
-('PROD005', 22.99),
-('PROD006', 5.50),
-('PROD007', 18.20),
-('PROD008', 9.99);
+-- Insert categories
+INSERT INTO categories (code, name) VALUES
+('clothing', 'Clothing'),
+('shoes', 'Shoes'),
+('accessories', 'Accessories');
 
--- Insert variants for each product using product code to look up product_id
+-- Insert products and assign them to a category
+INSERT INTO products (code, price, category_id) VALUES
+('PROD001', 10.99, (SELECT id FROM categories WHERE code = 'clothing')),
+('PROD004', 15.00, (SELECT id FROM categories WHERE code = 'clothing')),
+('PROD007', 18.20, (SELECT id FROM categories WHERE code = 'clothing')),
+('PROD002', 12.49, (SELECT id FROM categories WHERE code = 'shoes')),
+('PROD006', 5.50, (SELECT id FROM categories WHERE code = 'shoes')),
+('PROD003', 8.75, (SELECT id FROM categories WHERE code = 'accessories')),
+('PROD005', 22.99, (SELECT id FROM categories WHERE code = 'accessories')),
+('PROD008', 9.99, (SELECT id FROM categories WHERE code = 'accessories'));
 
 -- Product 1: 3 variants
 INSERT INTO product_variants (product_id, name, sku, price) VALUES
@@ -41,9 +45,6 @@ INSERT INTO product_variants (product_id, name, sku, price) VALUES
 ((SELECT id FROM products WHERE code = 'PROD005'), 'Variant D', 'SKU005D', 22.99),
 ((SELECT id FROM products WHERE code = 'PROD005'), 'Variant E', 'SKU005E', 23.49),
 ((SELECT id FROM products WHERE code = 'PROD005'), 'Variant F', 'SKU005F', NULL);
-
--- Product 6: 2 variants
--- No variants for this product
 
 -- Product 7: 5 variants
 INSERT INTO product_variants (product_id, name, sku, price) VALUES

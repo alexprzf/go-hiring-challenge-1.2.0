@@ -15,6 +15,11 @@ import (
 	"github.com/mytheresa/go-hiring-challenge/models"
 )
 
+type CombinedRepository struct {
+	*models.ProductsRepository
+	*models.CategoriesRepository
+}
+
 func main() {
 	// Load environment variables from .env file
 	if err := godotenv.Load(".env"); err != nil {
@@ -36,11 +41,21 @@ func main() {
 
 	// Initialize handlers
 	prodRepo := models.NewProductsRepository(db)
-	cat := catalog.NewCatalogHandler(prodRepo)
+	categoriesRepo := models.NewCategoriesRepository(db)
+
+	repo := &CombinedRepository{
+		ProductsRepository:   prodRepo,
+		CategoriesRepository: categoriesRepo,
+	}
+
+	cat := catalog.NewCatalogHandler(repo)
 
 	// Set up routing
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /catalog", cat.HandleGet)
+	mux.HandleFunc("GET /catalog/{code}", cat.HandleGetDetails)
+	mux.HandleFunc("GET /categories", cat.HandleGetCategories)
+	mux.HandleFunc("POST /categories", cat.HandleCreateCategory)
 
 	// Set up the HTTP server
 	srv := &http.Server{
